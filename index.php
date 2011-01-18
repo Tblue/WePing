@@ -11,7 +11,10 @@ error_reporting(E_ALL ^ E_NOTICE);
 require_once('HTTPDigest.php');
 $HTTPDigest =& new HTTPDigest();
 $HTTPDigest->passwordsHashed = false;
-$HTTPDigest->nonceLife = 12*60*60; //stay logged in 12 hours
+$HTTPDigest->nonceLife       = 12*60*60; //stay logged in 12 hours
+$HTTPDigest->privateKey      = $CONF['app_key'];
+$HTTPDigest->realm           = 'WePing';
+
 $LOGIN = $HTTPDigest->authenticate($USERS);
 if(!$LOGIN){
     $HTTPDigest->send();

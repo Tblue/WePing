@@ -134,6 +134,21 @@ class HTTPDigest
                 if (strpos($requestURI, '?') !== FALSE) { // hack for IE which does not pass querystring in URI element of Digest string or in response hash
                     $requestURI = substr($requestURI, 0, strlen($uri[1]));
                 }
+                
+                /* Tblue> The request-uri field can actually contain an (absolute) URL (per RFC),
+                 *        but $requestURI will always be relative. We would need access to the
+                 *        original HTTP request line, but it looks like we can't do that in PHP.
+                 *        This means we have to reconstruct it somehow -- e. g. by looking at
+                 *        $_SERVER['HTTP_HOST'] and $_SERVER['HTTPS']. The problem with this is
+                 *        that at least the former does not need to be set (you can do a perfectly
+                 *        valid HTTP request with an absolute request URL and without a Host header).
+                 */
+                if( preg_match( '#^https?://#i', $uri[1] ) && isset( $_SERVER['HTTP_HOST'] ) ) {
+                    // request-uri is an absolute URL.
+                    $requestURI = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['SSL'] != 'off' ? 'https' : 'http' ).
+                                        '://'.$_SERVER['HTTP_HOST'].$requestURI;
+                }
+
                 if (
                     isset($users[$username]) &&
                     $opaque[1] == $this->getOpaque() &&
