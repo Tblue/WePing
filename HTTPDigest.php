@@ -134,7 +134,7 @@ class HTTPDigest
                 if (strpos($requestURI, '?') !== FALSE) { // hack for IE which does not pass querystring in URI element of Digest string or in response hash
                     $requestURI = substr($requestURI, 0, strlen($uri[1]));
                 }
-                
+
                 /* Tblue> The request-uri field can actually contain an (absolute) URL (per RFC),
                  *        but $requestURI will always be relative. We would need access to the
                  *        original HTTP request line, but it looks like we can't do that in PHP.
